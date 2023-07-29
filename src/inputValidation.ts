@@ -1,9 +1,7 @@
 import { body } from "express-validator";
-import { DB, TABLE } from './data'
+import { DB } from './repositories/mongo-repository'
 
 const urlRGX = new RegExp('^https://([a-zA-Z0-9_-]+\\.)+[a-zA-Z0-9_-]+(\\/[a-zA-Z0-9_-]+)*\\/?$')
-
-const db: DB = new DB()
 
 
 
@@ -16,8 +14,8 @@ const urlRGXValidation = (value: string) => {
 
 
 
-const blogExists = (id: string) => {
-    if (!db.exists(TABLE.BLOGS, id)) {
+const blogExists = async (id: string) => {
+    if (!await DB.exists('blogs', id)) {
         throw new Error('blogId does not exist!')
     }
     return true

@@ -1,46 +1,55 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.blogsRouter = void 0;
 const express_1 = require("express");
-const data_1 = require("../data");
-const data_2 = require("../data");
+const mongo_repository_1 = require("../repositories/mongo-repository");
 const express_basic_auth_1 = __importDefault(require("express-basic-auth"));
 const express_validator_1 = require("express-validator");
 const inputValidation_1 = require("../inputValidation");
 exports.blogsRouter = (0, express_1.Router)({});
-const db = new data_1.DB();
-exports.blogsRouter.post('/', (0, express_basic_auth_1.default)({ users: data_2.admins }), inputValidation_1.blogVdChain, (req, res) => {
+exports.blogsRouter.post('/', (0, express_basic_auth_1.default)({ users: mongo_repository_1.admins }), inputValidation_1.blogVdChain, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const result = (0, express_validator_1.validationResult)(req);
     if (result.isEmpty()) {
         const newEntry = {
-            id: db.nextID(data_1.TABLE.BLOGS),
+            id: yield mongo_repository_1.DB.newID('blogs'),
             name: req.body.name,
             description: req.body.description,
-            websiteUrl: req.body.websiteUrl
+            websiteUrl: req.body.websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         };
-        db.create(data_1.TABLE.BLOGS, newEntry);
+        yield mongo_repository_1.DB.create('blogs', newEntry);
         res.status(201).json(newEntry);
     }
     else {
         res.status(400).json({ errorsMessages: result.array().map(({ path, msg }) => ({ message: msg, field: path })) });
     }
-});
-exports.blogsRouter.get('/', (req, res) => {
-    res.status(200).json(db.getAll(data_1.TABLE.BLOGS));
-});
-exports.blogsRouter.get('/:id', (req, res) => {
-    if (!db.exists(data_1.TABLE.BLOGS, req.params.id)) {
+}));
+exports.blogsRouter.get('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.status(200).json(yield mongo_repository_1.DB.getAll('blogs'));
+}));
+exports.blogsRouter.get('/:id', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!(yield mongo_repository_1.DB.exists('blogs', req.params.id))) {
         res.sendStatus(404);
     }
     else {
-        res.status(200).json(db.get(data_1.TABLE.BLOGS, req.params.id));
+        res.status(200).json(yield mongo_repository_1.DB.get('blogs', req.params.id));
     }
-});
-exports.blogsRouter.put('/:id', (0, express_basic_auth_1.default)({ users: data_2.admins }), inputValidation_1.blogVdChain, (req, res) => {
-    if (!db.exists(data_1.TABLE.BLOGS, req.params.id)) {
+}));
+exports.blogsRouter.put('/:id', (0, express_basic_auth_1.default)({ users: mongo_repository_1.admins }), inputValidation_1.blogVdChain, (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    if (!(yield mongo_repository_1.DB.exists('blogs', req.params.id))) {
         res.sendStatus(404);
     }
     else {
@@ -51,14 +60,14 @@ exports.blogsRouter.put('/:id', (0, express_basic_auth_1.default)({ users: data_
                 description: req.body.description,
                 websiteUrl: req.body.websiteUrl
             };
-            db.update(data_1.TABLE.BLOGS, req.params.id, updateEntry);
+            yield mongo_repository_1.DB.update('blogs', req.params.id, updateEntry);
             res.sendStatus(204);
         }
         else {
             res.status(400).json({ errorsMessages: result.array().map(({ path, msg }) => ({ message: msg, field: path })) });
         }
     }
-});
-exports.blogsRouter.delete('/:id', (0, express_basic_auth_1.default)({ users: data_2.admins }), (req, res) => {
-    res.sendStatus(db.delete(data_1.TABLE.BLOGS, req.params.id));
-});
+}));
+exports.blogsRouter.delete('/:id', (0, express_basic_auth_1.default)({ users: mongo_repository_1.admins }), (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    res.sendStatus(yield mongo_repository_1.DB.delete('blogs', req.params.id));
+}));
