@@ -13,7 +13,7 @@ export const DB = {
     },
 
     async get(collection: string, id: string): Promise<object | null> {
-        const entry = await db.collection(collection).findOne({id: id})
+        const entry = await db.collection(collection).findOne({id: id},{projection:{_id: 0}})
         if (entry) {
             return entry
         }
@@ -21,7 +21,7 @@ export const DB = {
     },
 
     async getAll(collection: string): Promise<Array<object | null>> {
-        return db.collection(collection).find({}).toArray()
+        return db.collection(collection).find({},{projection:{_id: 0}}).toArray()
     },
 
     async getProperty(collection: string, id: string, property: string) {
@@ -70,12 +70,6 @@ export const DB = {
 
 }
 
-
-/*
-const getAdminsObj = async () => {
-    return Object.fromEntries((await DB.getAll('admins')).map(e => [e.login, e.password]))
-}
-*/
 
 
 //Take from database actual value for admins and assign it when it gets resolved
