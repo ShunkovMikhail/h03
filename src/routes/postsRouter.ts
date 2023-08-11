@@ -30,7 +30,7 @@ postsRouter.post('/', basicAuth({users: admins}), postVdChain, async (req: TypeO
             createdAt: new Date().toISOString()
         }
 
-        await postsRepo.create(newEntry)
+        await postsRepo.create({ ...newEntry })
         res.status(201).json(newEntry)
     } else {
         res.status(400).json({errorsMessages: result.array().map(({path, msg}) => ({message: msg, field: path}))})

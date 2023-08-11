@@ -29,7 +29,7 @@ blogsRouter.post('/', basicAuth({users: admins}), blogVdChain, async (req: TypeO
             isMembership: false
         }
 
-        await blogsRepo.create(newEntry)
+        await blogsRepo.create({ ...newEntry })
         res.status(201).json(newEntry)
 
     } else {
