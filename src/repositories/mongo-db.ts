@@ -12,19 +12,6 @@ export const DB = {
         await db.collection(collection).insertOne(input)
     },
 
-    /*
-    createAtID(table: number, id: string, input: object) {
-        if (this.exists(table, id)) {
-            return
-        }
-        const index: number = parseInt(id, 10)
-
-        if (isFinite(index)) {
-            localDb[table][index] = input
-        }
-    }
-    */
-
     async get(collection: string, id: string): Promise<object | null> {
         const entry = await db.collection(collection).findOne({id: id})
         if (entry) {
