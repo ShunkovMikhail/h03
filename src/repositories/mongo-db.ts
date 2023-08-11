@@ -72,7 +72,7 @@ export const DB = {
         return 204
     },
 
-    async newID(collection: string): Promise<string> {
+    async generateUUID(): Promise<string> {
         return uuid()
     },
 

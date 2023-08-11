@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express'
-import { DB } from './repositories/mongo-repository'
+import { DB } from './repositories/mongo-db'
 import { blogsRouter } from "./routes/blogsRouter"
 import { postsRouter } from "./routes/postsRouter"
 
